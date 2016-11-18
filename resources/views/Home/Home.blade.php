@@ -7,7 +7,7 @@
             </div>
             <div class="card">
                 <div class="card-body card-padding">
-                    <h2>Bienvenido
+                    <h2>Realizar Pago
                     </h2>
                 </div>
             </div>

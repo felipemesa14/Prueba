@@ -10,10 +10,5 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-//*******************************PAGINA DE BIENVENIDA********************************//
-////Direccionamiento a la pagina de bienvenida
-Route::get('Home', [
-    'middleware' => 'auth',
-    'uses' => 'Home\HomeController@index'
-]);
+Route::get('/', 'placetopay\pago@index');
 

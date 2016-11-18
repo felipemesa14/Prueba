@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>RadixSoft</title>
+    <title>PlacetoPay</title>
     @include('MaterialCss.Css')
     @yield('stylesheet')
 </head>
@@ -14,12 +14,9 @@
 <section id="main">
     @include('Menu.Menu_left')
     @yield('content')
-    @include('RIS.Modales.ModalAgregarObservacion')
-    <input type="hidden" id="ShowModificarCitas" value="{{URL::to('RIS/ModificarCitasShowModal')}}"/>
-    <input type="hidden" id="ShowCancelarCitas" value="{{URL::to('RIS/CancelarCitasShowModal')}}"/>
 </section>
 <footer id="footer">
-    Copyright &copy; 2016 Conectib S.A.S
+    Copyright &copy; 2016 Felipe
 </footer>
 <!-- Page Loader -->
 <div class="page-loader">
