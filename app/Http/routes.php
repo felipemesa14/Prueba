@@ -13,5 +13,7 @@
 Route::get('/', 'placetopay\payment@index');
 
 //Ruta para registrar la persona que realiza la transaccion y empezar con el proceso de pago
-Route:post('RegisterPerson','placetopay\payment@RegisterPerson');
+Route::post('RegisterTransaction', 'placetopay\payment@RegisterTransaction');
+Route::post('createTransacction', 'placetopay\payment@createTransacction');
+
 
