@@ -28,7 +28,6 @@
 {{--<script type="text/javascript" src="{{asset('assets/js/page-ui-notifications.js')}}"></script>--}}
 <script src="{{asset('assets/lib/jquery.maskedinput/jquery.maskedinput.js')}}" type="text/javascript"></script>
 <script type="text/javascript" src="{{asset('assets/js/page-form-masks.js')}}"></script>
-<script type="text/javascript" src="{{asset('assets/javascript/toolkit/_toolkit.js')}}"></script>
 
 <script type="text/javascript">
     $(function () {

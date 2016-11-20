@@ -15,9 +15,6 @@
             <li>
                 <a href="#"><i class="zmdi zmdi-face"></i> Mi Perfil</a>
             </li>
-            <li>
-                <a href="{{URL::to('LogOut')}}"><i class="zmdi zmdi-time-restore"></i> Salir</a>
-            </li>
         </ul>
     </div>
 

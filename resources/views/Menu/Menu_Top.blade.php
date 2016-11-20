@@ -1,4 +1,4 @@
-<header id="header-2" class="clearfix" data-current-skin="cyan">
+<header id="header-2" class="clearfix" data-current-skin="green">
     <!-- Make sure to change both class and data-current-skin when switching sking manually -->
     <ul class="header-inner clearfix">
         <li id="menu-trigger" data-trigger=".ha-menu" class="visible-xs">
@@ -9,30 +9,9 @@
             </div>
         </li>
         <li class="logo hidden-xs">
-            <a href="{{URL::to('Home')}}">Place to Pay</a>
+            <a href="{{URL::to('/')}}">Place to Pay</a>
         </li>
         <li class="hidden-xs">
-        </li>
-        <li class="pull-right">
-            <ul class="top-menu">
-                <li class="dropdown">
-                    <a data-toggle="dropdown" href="">
-                        <i class="tm-icon zmdi zmdi-more-vert"></i>
-                    </a>
-                    <ul class="dropdown-menu dm-icon pull-right">
-
-                        <li>
-                            <a href="{{URL::to('LogOut')}}">
-                                <i class="zmdi zmdi-time-restore"></i>
-                                Salir
-                            </a>
-                            <input type="hidden" name="_token" value="{{csrf_token()}}" id="URL_token">
-
-                        </li>
-
-                    </ul>
-                </li>
-            </ul>
         </li>
     </ul>
     <nav class="ha-menu">
@@ -40,7 +19,7 @@
             <li class="waves-effect" id="liHome">
                 <a href="{{URL::to('/')}}">
                     <i class="zmdi zmdi-home"></i>
-                    Inicio
+                    Registro de Pago
                 </a>
             </li>
         </ul>

@@ -36,7 +36,7 @@
 <body>
 <div class="container">
     <div class="content">
-        <div class="title">): Esto no deberia estar pasando. Disculpas :(</div>
+        <div class="title">Esto no deberia estar pasando. Disculpas</div>
     </div>
 </div>
 </body>

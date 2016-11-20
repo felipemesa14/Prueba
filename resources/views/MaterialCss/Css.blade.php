@@ -30,7 +30,6 @@
 
 <link href="{{asset('Material/vendors/bower_components/material-design-iconic-font/dist/css/material-design-iconic-font.min.css')}}"
       rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="{{asset('assets/styles/ModalesPersonalizadas.css')}}"/>
 <style>
     .ui-autocomplete {
         position: fixed;

@@ -2,6 +2,7 @@
 
 namespace Epsilon\Http\Controllers;
 
+use Artisaninweb\SoapWrapper\Facades\SoapWrapper;
 use Carbon\Carbon;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
@@ -13,7 +14,29 @@ abstract class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
+    public function Soap()
+    {
+        SoapWrapper::add(function ($service) {
+            $service
+                ->name('placetopay')
+                ->wsdl("https://test.placetopay.com/soap/pse/?wsdl")
+                ->trace(true)
+                ->cache(WSDL_CACHE_DISK);
+        });
+    }
 
+    public function Auth()
+    {
+        $tranKey = '024h1IlD';
+        $seed = date('c');
+        $hashString = sha1($seed . $tranKey, false);
+        $auth = [
+            'login' => '6dd490faf9cb87a9862245da41170ff2',
+            'seed' => $seed,
+            'tranKey' => $hashString
+        ];
+        return $auth;
+    }
 
     public function _PrintTableAll($Array)
     {

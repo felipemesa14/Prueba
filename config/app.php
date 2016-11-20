@@ -151,7 +151,8 @@ return [
 
         Barryvdh\DomPDF\ServiceProvider::class,
 
-        Maatwebsite\Excel\ExcelServiceProvider::class
+        Maatwebsite\Excel\ExcelServiceProvider::class,
+        Artisaninweb\SoapWrapper\ServiceProvider::class
 
     ],
 
@@ -204,7 +205,9 @@ return [
         'Form' => Collective\Html\FormFacade::class,
         'Html' => Collective\Html\HtmlFacade::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
-        'Excel'=>Maatwebsite\Excel\Facades\Excel::class
+        'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'SoapWrapper' => Artisaninweb\SoapWrapper\Facades\SoapWrapper::class,
+        'SoapClient' => SoapClient::class
     ],
 
 ];

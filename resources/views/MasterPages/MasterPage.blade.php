@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PlacetoPay</title>
+    <link rel="icon" type="image/x-icon" href="https://static.placetopay.com/wp/uploads/2016/01/fav.png">
+    <title>Place to Pay</title>
     @include('MaterialCss.Css')
     @yield('stylesheet')
 </head>
@@ -16,7 +17,7 @@
     @yield('content')
 </section>
 <footer id="footer">
-    Copyright &copy; 2016 Felipe
+    Copyright &copy; 2016 Juan Felipe
 </footer>
 <!-- Page Loader -->
 <div class="page-loader">

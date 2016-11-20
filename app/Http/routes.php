@@ -10,5 +10,8 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-Route::get('/', 'placetopay\pago@index');
+Route::get('/', 'placetopay\payment@index');
+
+//Ruta para registrar la persona que realiza la transaccion y empezar con el proceso de pago
+Route:post('RegisterPerson','placetopay\payment@RegisterPerson');
 
