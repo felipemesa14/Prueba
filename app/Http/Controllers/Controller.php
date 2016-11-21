@@ -4,6 +4,7 @@ namespace PlacetoPay\Http\Controllers;
 
 use Artisaninweb\SoapWrapper\Facades\SoapWrapper;
 use Carbon\Carbon;
+use PlacetoPay\Models\Bank;
 use PlacetoPay\Models\Buyer;
 use PlacetoPay\Models\pay;
 use PlacetoPay\Models\Payer;
@@ -103,7 +104,7 @@ abstract class Controller extends BaseController
         });
     }
 
-    /** Datos de autenticacion contra el servicio de PlacetoPay
+    /** Datos de autenticación contra el servicio de PlacetoPay
      * @return array
      */
 
@@ -125,13 +126,25 @@ abstract class Controller extends BaseController
      */
     public function getBankList()
     {
-        $auth = $this->Auth();
-        $this->Soap();
-        $getBankList = '';
-        SoapWrapper::service('placetopay', function ($soap) use ($auth, &$getBankList) {
-            $getBankList = $soap->call('getBankList', array(['auth' => $auth]));
-        });
-        return $getBankList = json_decode(json_encode($getBankList), true);
+        //Consultar la ultima actualizacion del cacheo de los bancos
+        $lastUpdate = new Carbon($Banks = Bank::all()->max('updated_at'));
+        $today = new Carbon();
+        if ($lastUpdate->toDateString() < $today->toDateString() || empty($Banks)) {
+            $auth = $this->Auth();
+            $this->Soap();
+            $getBankList = '';
+            SoapWrapper::service('placetopay', function ($soap) use ($auth, &$getBankList) {
+                $getBankList = $soap->call('getBankList', array(['auth' => $auth]));
+            });
+            Bank::whereNotNull('bankCode')->delete();
+            foreach ($getBankList->getBankListResult->item as $banks) {
+                $CreateBanks = new Bank();
+                $CreateBanks->bankCode = $banks->bankCode;
+                $CreateBanks->bankName = $banks->bankName;
+                $CreateBanks->save();
+            }
+        }
+        return Bank::orderBy('bankName', 'asc')->get();
     }
 
     /** Metodo para consumir el servicio createTransaction Enviando todos los parametros necesarios para crear la transaccion
@@ -139,7 +152,8 @@ abstract class Controller extends BaseController
      * @return mixed
      */
 
-    public function createTransactionSoap($arrayPay)
+    public
+    function createTransactionSoap($arrayPay)
     {
         $auth = $this->Auth();
         $this->Soap();
@@ -147,14 +161,15 @@ abstract class Controller extends BaseController
         SoapWrapper::service('placetopay', function ($service) use ($auth, &$createTransacction, &$arrayPay) {
             $createTransacction = $service->call('createTransaction', array(['auth' => $auth, 'transaction' => $arrayPay]));
         });
-        return $createTransacction = json_decode(json_encode($createTransacction), true);
+        return $createTransacction;
     }
 
     /** Consumo del servicio para consultar el estado de la transaccion se envia como parametro el trannsactionID
      * @param $transactionID
      * @return mixed
      */
-    public function getTransactionInformation($transactionID)
+    public
+    function getTransactionInformation($transactionID)
     {
         $auth = $this->Auth();
         $this->Soap();
@@ -162,7 +177,7 @@ abstract class Controller extends BaseController
         SoapWrapper::service('placetopay', function ($service) use ($auth, &$getTransactionInformation, &$transactionID) {
             $getTransactionInformation = $service->call('getTransactionInformation', array(['auth' => $auth, 'transactionID' => $transactionID]));
         });
-        return $getTransactionInformation = json_decode(json_encode($getTransactionInformation), true);
+        return $getTransactionInformation;
 
     }
 }

@@ -2,6 +2,7 @@
 
 namespace PlacetoPay\Http\Controllers\placetopay;
 
+use Illuminate\Support\Facades\Session;
 use PlacetoPay\Models\pay;
 use PlacetoPay\Models\Payer;
 use PlacetoPay\Models\TypeClient;
@@ -35,6 +36,7 @@ class payment extends Controller
     {
         //Datos del Pagador
         $Document = $request->input('document');
+        Session::put('currentUser', $Document);
         $TypeDocument = $request->input('TypeDocument');
         $firstName = $request->input('firstName');
         $lastName = $request->input('lastName');
@@ -46,6 +48,7 @@ class payment extends Controller
         $lastNameBuyer = $request->input('BuyerlastName');
         //Datos del pago
         $reference = $request->input('reference');
+        session()->put('referencePay', $reference);
         $totalAmount = $request->input('totalAmount');
         $Description = $request->input('description');
         $currency = $request->input('currency');
@@ -72,8 +75,8 @@ class payment extends Controller
             $result = array('document' => $Document, 'documentType' => $TypeDocument, 'firstName' => $firstName,
                 'lastName' => $lastName, 'emailAddress' => $emailAddress, 'idAdress' => $ipAdress, 'currency' => $currency,
                 'totalAmount' => $totalAmount, 'description' => $Description, 'reference' => $reference,
-                'descPay' => $descPay, 'img' => $img, 'bankInterface' => $TypesClients);
-            return view('Home.SetTransacction', $result, $getBankList);
+                'descPay' => $descPay, 'img' => $img, 'bankInterface' => $TypesClients, 'getBankList' => $getBankList);
+            return view('Home.SetTransacction', $result);
         } catch (Exception $e) {
             DB::rollback();
             return view('Home.Home');
@@ -107,10 +110,11 @@ class payment extends Controller
             'totalAmount' => $pay->totalAmount, 'userAgent' => $userAgent);
 
         $createTransaction = $this->createTransactionSoap($arrayPay);
-        if ($createTransaction['createTransactionResult']['returnCode'] == 'SUCCESS' && isset($createTransaction['createTransactionResult']['returnCode'])) {
-            $bankURL = $createTransaction['createTransactionResult']['bankURL'];
-            $transactionID = $createTransaction['createTransactionResult']['transactionID'];
-            $trazabilityCode = $createTransaction['createTransactionResult']['trazabilityCode'];
+
+        if ($createTransaction->createTransactionResult->returnCode == 'SUCCESS' && isset($createTransaction->createTransactionResult->returnCode)) {
+            $bankURL = $createTransaction->createTransactionResult->bankURL;
+            $transactionID = $createTransaction->createTransactionResult->transactionID;
+            $trazabilityCode = $createTransaction->createTransactionResult->trazabilityCode;
             //Guardar datos del pago
             $this->SavePay($reference, $pay->description, $pay->currency, $pay->totalAmount, $document, '',
                 $bankCode, $bankInterface, $transactionID, $trazabilityCode);
@@ -132,8 +136,8 @@ class payment extends Controller
         //Consultar los datos de referencia del pago
         $ConsultPay = pay::find($reference);
         $getTransactionInformation = $this->getTransactionInformation($ConsultPay->transactionID);
-        $transactionState = $getTransactionInformation['getTransactionInformationResult']['transactionState'];
-        $responseReasonText = $getTransactionInformation['getTransactionInformationResult']['responseReasonText'];
+        $transactionState = $getTransactionInformation->getTransactionInformationResult->transactionState;
+        $responseReasonText = $getTransactionInformation->getTransactionInformationResult->responseReasonText;
         $result = array();
         $result['responseReasonText'] = $responseReasonText;
         ($transactionState == 'OK') ? $result['class'] = 'success' :

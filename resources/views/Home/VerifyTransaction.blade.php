@@ -13,7 +13,7 @@
                         <div class="col-lg-2 col-sm-1 col-md-1 col-xs-0"></div>
                         <div class="col-lg-8 col-sm-8 col-md-8 col-xs-12">
                             <div class="alert alert-{{$class}} alert-white rounded">
-                                <i class="zmdi zmdi-check-all"></i><strong> {{$responseReasonText}}!! </strong>
+                                <strong> {{$responseReasonText}}!! </strong>
                             </div>
                         </div>
                         <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">

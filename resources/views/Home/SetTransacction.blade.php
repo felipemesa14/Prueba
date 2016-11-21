@@ -88,25 +88,23 @@
                                                 class="form-control"
                                                 required>
                                             <option value="">.:Seleccione:.</option>
-                                            @foreach($getBankListResult as $bankList)
-                                                @foreach($bankList as $BankList)
-                                                    <option value="{{$BankList['bankCode']}}">
-                                                        {{
-                                                        $BankList['bankName']
-                                                        }}</option>
-                                                @endforeach
+                                            @foreach($getBankList as $bankList)
+                                                <option value="{{$bankList->bankCode}}">
+                                                    {{
+                                                    $bankList->bankName
+                                                    }}</option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
                                 <br><br>
-                                    <div class="form-group">
-                                        <input type="hidden" name="_token" value="{{csrf_token()}}"/>
-                                        <br>
-                                        <button type="submit" class="btn btn-success">
-                                            Pagar
-                                        </button>
-                                    </div>
+                                <div class="form-group">
+                                    <input type="hidden" name="_token" value="{{csrf_token()}}"/>
+                                    <br>
+                                    <button type="submit" class="btn btn-success">
+                                        Pagar
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </form>
