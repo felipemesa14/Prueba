@@ -8,16 +8,19 @@ use Epsilon\Models\pay;
 use Epsilon\Models\Payer;
 use Epsilon\Models\TypeClient;
 use Epsilon\Models\TypeDocument;
+use GuzzleHttp\Subscriber\Redirect;
 use Illuminate\Http\Request;
 use Epsilon\Http\Controllers\Controller;
+use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use League\Flysystem\Exception;
 
 class payment extends Controller
 {
     /**
      * Vista crear transaccion
-     *
+     * Diligenciando datos del cliente y datos del pago a relizar
      *
      */
     public function index()
@@ -29,7 +32,8 @@ class payment extends Controller
         return view('Home.Home', $result);
     }
 
-    /*Return listbank, para realizar la transaccion
+    /**
+     * Return datos del cliente y datos del pago, para asi seleccionar tipo de banco
      *
      */
     public function RegisterTransaction(Request $request)
@@ -54,9 +58,9 @@ class payment extends Controller
         try {
             DB::beginTransaction();
             //Guardar datos del pagador
-            $this->SaveClient($Document, $TypeDocument, $firstName, $lastName, $DocumentBuyer, $TypeDocumentBuyer, $firstNameBuyer, $lastNameBuyer, $emailAddress, '');
+            $this->SaveClient($Document, $TypeDocument, $firstName, $lastName, $DocumentBuyer, $TypeDocumentBuyer, $firstNameBuyer, $lastNameBuyer, $emailAddress);
             //Guardar datos del pago
-            $this->SavePay($reference, $Description, $currency, $totalAmount, $Document, $DocumentBuyer);
+            $this->SavePay($reference, $Description, $currency, $totalAmount, $Document, $DocumentBuyer, '', '', '', '');
             //Tipo de Cliente
             $TypesClients = TypeClient::all();
             DB::commit();
@@ -83,6 +87,9 @@ class payment extends Controller
 
     }
 
+    /**
+     * Creacion de la transaccion enviando parametros necesarios para el pago contra el banco
+     */
     public function createTransacction(Request $request)
     {
 
@@ -94,7 +101,7 @@ class payment extends Controller
         $client = Payer::find($document);
         //Consultar datos del pago
         $pay = pay::find($reference);
-        $returnURL = 'https://127.0.0.1/PlacetoPay/VerifyTransacction';
+        $returnURL = 'https://127.0.0.1/PlacetoPay/VerifyTransaction/' . $reference;
         $userAgent = $request->header('User-Agent');
         $ipAddress = $request->ip();
         $arrayPayer = array('document' => $document, 'documentType' => $client->documentType, 'emailAddress' => $client->emailAddress,
@@ -105,29 +112,39 @@ class payment extends Controller
             'totalAmount' => $pay->totalAmount, 'userAgent' => $userAgent);
 
         $createTransaction = $this->createTransactionSoap($arrayPay);
+        $bankURL = $createTransaction['createTransactionResult']['bankURL'];
+        $transactionID = $createTransaction['createTransactionResult']['transactionID'];
+        $trazabilityCode = $createTransaction['createTransactionResult']['trazabilityCode'];
+        //Guardar datos del pago
+        $this->SavePay($reference, $pay->description, $pay->currency, $pay->totalAmount, $document, '',
+            $bankCode, $bankInterface, $transactionID, $trazabilityCode);
+        return redirect()->away($bankURL);
     }
 
     /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
-     * @return \Illuminate\Http\Response
+     * Verifica el estado de la transaccion y retornar la vista con los mensajes
      */
-    public
-    function update(Request $request, $id)
+    public function VerifyTransaction($reference)
     {
-        //
+        //Consultar los datos de referencia del pago
+        $ConsultPay = pay::find($reference);
+        $ConsultPayer = Payer::find($ConsultPay->payer);
+        $getTransactionInformation = $this->getTransactionInformation($ConsultPay->transactionID);
+        $transactionState = $getTransactionInformation['getTransactionInformationResult']['transactionState'];
+        $responseReasonText = $getTransactionInformation['getTransactionInformationResult']['responseReasonText'];
+        $result = array();
+        $result['responseReasonText'] = $responseReasonText;
+        ($transactionState == 'OK') ? $result['class'] = 'success' :
+            (($transactionState == 'NOT_AUTHORIZED') ? $result['class'] = 'warning' :
+                (($transactionState == 'PENDING') ? $result['class'] = 'info' : $result['class'] = 'danger'));
+//        OK, NOT_AUTHORIZED, PENDING, FAILED
+        $Pay = array();
+        $Pay['pay'] = $ConsultPay->toarray();
+        $Pay['payer'] = $ConsultPayer->toArray();
+        return view('Home.VerifyTransaction', $result, $Pay);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int $id
-     * @return \Illuminate\Http\Response
-     */
-    public
-    function destroy($id)
+    public function destroy($id)
     {
         //
     }

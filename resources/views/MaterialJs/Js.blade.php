@@ -26,7 +26,6 @@
 <script src="{{asset('Material/vendors/fileinput/fileinput.min.js')}}"></script>
 <script src="{{asset('Material/vendors/farbtastic/farbtastic.min.js')}}"></script>
 <script src="{{asset('Material/js/functions.js')}}"></script>
-<script src="{{asset('assets/javascript/toolkit/_toolkit.js')}}"></script>
 <script src="{{asset('assets/lib/jquery.gritter/js/jquery.gritter.js')}}" type="text/javascript"></script>
 <script src="{{asset('assets/lib/jquery.datatables/js/jquery.dataTables.min.js')}}" type="text/javascript"></script>
 <script src="{{asset('assets/lib/jquery.datatables/plugins/bootstrap/3/dataTables.bootstrap.js')}}"
