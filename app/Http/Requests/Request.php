@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Http\Requests;
+namespace PlacetoPay\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 

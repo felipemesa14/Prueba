@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Models;
+namespace PlacetoPay\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Http\Middleware;
+namespace PlacetoPay\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Guard;

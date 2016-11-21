@@ -1,19 +1,14 @@
 <?php
 
-namespace Epsilon\Http\Controllers\placetopay;
+namespace PlacetoPay\Http\Controllers\placetopay;
 
-use Artisaninweb\SoapWrapper\Facades\SoapWrapper;
-use Epsilon\Models\Buyer;
-use Epsilon\Models\pay;
-use Epsilon\Models\Payer;
-use Epsilon\Models\TypeClient;
-use Epsilon\Models\TypeDocument;
-use GuzzleHttp\Subscriber\Redirect;
+use PlacetoPay\Models\pay;
+use PlacetoPay\Models\Payer;
+use PlacetoPay\Models\TypeClient;
+use PlacetoPay\Models\TypeDocument;
 use Illuminate\Http\Request;
-use Epsilon\Http\Controllers\Controller;
-use Illuminate\Routing\Route;
+use PlacetoPay\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 use League\Flysystem\Exception;
 
 class payment extends Controller
@@ -28,7 +23,7 @@ class payment extends Controller
         $result = array();
         $result['TypesDocuments'] = TypeDocument::all();
         $result['reference'] = pay::all()->max('reference') + 1;
-
+        $result['message'] = '';
         return view('Home.Home', $result);
     }
 
@@ -101,7 +96,7 @@ class payment extends Controller
         $client = Payer::find($document);
         //Consultar datos del pago
         $pay = pay::find($reference);
-        $returnURL = 'https://127.0.0.1/PlacetoPay/VerifyTransaction/' . $reference;
+        $returnURL = 'https://' . $_SERVER['HTTP_HOST'] . '/PlacetoPay/VerifyTransaction/' . $reference;
         $userAgent = $request->header('User-Agent');
         $ipAddress = $request->ip();
         $arrayPayer = array('document' => $document, 'documentType' => $client->documentType, 'emailAddress' => $client->emailAddress,
@@ -112,13 +107,21 @@ class payment extends Controller
             'totalAmount' => $pay->totalAmount, 'userAgent' => $userAgent);
 
         $createTransaction = $this->createTransactionSoap($arrayPay);
-        $bankURL = $createTransaction['createTransactionResult']['bankURL'];
-        $transactionID = $createTransaction['createTransactionResult']['transactionID'];
-        $trazabilityCode = $createTransaction['createTransactionResult']['trazabilityCode'];
-        //Guardar datos del pago
-        $this->SavePay($reference, $pay->description, $pay->currency, $pay->totalAmount, $document, '',
-            $bankCode, $bankInterface, $transactionID, $trazabilityCode);
-        return redirect()->away($bankURL);
+        if ($createTransaction['createTransactionResult']['returnCode'] == 'SUCCESS' && isset($createTransaction['createTransactionResult']['returnCode'])) {
+            $bankURL = $createTransaction['createTransactionResult']['bankURL'];
+            $transactionID = $createTransaction['createTransactionResult']['transactionID'];
+            $trazabilityCode = $createTransaction['createTransactionResult']['trazabilityCode'];
+            //Guardar datos del pago
+            $this->SavePay($reference, $pay->description, $pay->currency, $pay->totalAmount, $document, '',
+                $bankCode, $bankInterface, $transactionID, $trazabilityCode);
+            return redirect()->away($bankURL);
+        } else {
+            $result = array();
+            $result['TypesDocuments'] = TypeDocument::all();
+            $result['reference'] = pay::all()->max('reference') + 1;
+            $result['message'] = 'Ocurrio un error creando la transacción';
+            return view('Home.Home', $result);
+        }
     }
 
     /**
@@ -128,7 +131,6 @@ class payment extends Controller
     {
         //Consultar los datos de referencia del pago
         $ConsultPay = pay::find($reference);
-        $ConsultPayer = Payer::find($ConsultPay->payer);
         $getTransactionInformation = $this->getTransactionInformation($ConsultPay->transactionID);
         $transactionState = $getTransactionInformation['getTransactionInformationResult']['transactionState'];
         $responseReasonText = $getTransactionInformation['getTransactionInformationResult']['responseReasonText'];
@@ -137,10 +139,9 @@ class payment extends Controller
         ($transactionState == 'OK') ? $result['class'] = 'success' :
             (($transactionState == 'NOT_AUTHORIZED') ? $result['class'] = 'warning' :
                 (($transactionState == 'PENDING') ? $result['class'] = 'info' : $result['class'] = 'danger'));
-//        OK, NOT_AUTHORIZED, PENDING, FAILED
         $Pay = array();
         $Pay['pay'] = $ConsultPay->toarray();
-        $Pay['payer'] = $ConsultPayer->toArray();
+        $Pay['payer'] = Payer::find($ConsultPay->payer)->toArray();
         return view('Home.VerifyTransaction', $result, $Pay);
     }
 

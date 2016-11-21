@@ -1,12 +1,12 @@
 <?php
 
-namespace Epsilon\Http\Controllers;
+namespace PlacetoPay\Http\Controllers;
 
 use Artisaninweb\SoapWrapper\Facades\SoapWrapper;
 use Carbon\Carbon;
-use Epsilon\Models\Buyer;
-use Epsilon\Models\pay;
-use Epsilon\Models\Payer;
+use PlacetoPay\Models\Buyer;
+use PlacetoPay\Models\pay;
+use PlacetoPay\Models\Payer;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;

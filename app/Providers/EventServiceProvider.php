@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Providers;
+namespace PlacetoPay\Providers;
 
 use Illuminate\Contracts\Events\Dispatcher as DispatcherContract;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -13,8 +13,8 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Epsilon\Events\SomeEvent' => [
-            'Epsilon\Listeners\EventListener',
+        'PlacetoPay\Events\SomeEvent' => [
+            'PlacetoPay\Listeners\EventListener',
         ],
     ];
 

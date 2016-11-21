@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Console;
+namespace PlacetoPay\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -13,7 +13,7 @@ class Kernel extends ConsoleKernel
      * @var array
      */
     protected $commands = [
-        \Epsilon\Console\Commands\Inspire::class,
+        \PlacetoPay\Console\Commands\Inspire::class,
     ];
 
     /**

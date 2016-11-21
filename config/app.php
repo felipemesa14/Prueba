@@ -140,10 +140,10 @@ return [
         /*
          * Application Service Providers...
          */
-        Epsilon\Providers\AppServiceProvider::class,
-        Epsilon\Providers\AuthServiceProvider::class,
-        Epsilon\Providers\EventServiceProvider::class,
-        Epsilon\Providers\RouteServiceProvider::class,
+        PlacetoPay\Providers\AppServiceProvider::class,
+        PlacetoPay\Providers\AuthServiceProvider::class,
+        PlacetoPay\Providers\EventServiceProvider::class,
+        PlacetoPay\Providers\RouteServiceProvider::class,
 
         Collective\Html\HtmlServiceProvider::class,
 

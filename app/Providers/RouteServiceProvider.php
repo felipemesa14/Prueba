@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Providers;
+namespace PlacetoPay\Providers;
 
 use Illuminate\Routing\Router;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -14,7 +14,7 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
-    protected $namespace = 'Epsilon\Http\Controllers';
+    protected $namespace = 'PlacetoPay\Http\Controllers';
 
     /**
      * Define your route model bindings, pattern filters, etc.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Jobs;
+namespace PlacetoPay\Jobs;
 
 use Illuminate\Bus\Queueable;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Events;
+namespace PlacetoPay\Events;
 
 abstract class Event
 {

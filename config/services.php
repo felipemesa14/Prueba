@@ -26,7 +26,7 @@ return [
     ],
 
     'stripe' => [
-        'model' => Epsilon\User::class,
+        'model' => PlacetoPay\User::class,
         'key' => env('STRIPE_KEY'),
         'secret' => env('STRIPE_SECRET'),
     ],

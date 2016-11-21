@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Console\Commands;
+namespace PlacetoPay\Console\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Foundation\Inspiring;

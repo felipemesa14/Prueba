@@ -27,7 +27,7 @@
       "database"
     ],
     "psr-4": {
-      "Epsilon\\": "app/"
+      "PlacetoPay\\": "app/"
     }
   },
   "autoload-dev": {

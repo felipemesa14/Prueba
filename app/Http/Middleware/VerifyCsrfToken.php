@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Http\Middleware;
+namespace PlacetoPay\Http\Middleware;
 
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as BaseVerifier;
 

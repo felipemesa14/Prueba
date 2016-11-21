@@ -1,6 +1,6 @@
 <?php
 
-namespace Epsilon\Providers;
+namespace PlacetoPay\Providers;
 
 use Illuminate\Support\ServiceProvider;
 

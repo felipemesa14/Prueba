@@ -5,6 +5,11 @@
             <div class="block-header">
                 <h2>Realizar Pagos</h2>
             </div>
+            @if ($message != '' && $message != null)
+                <div class="alert alert-warning">
+                    {{ $message }}
+                </div>
+            @endif
             <div class="card">
                 <div class="card-body card-padding">
                     <div class="alert alert-info">
@@ -51,7 +56,8 @@
                             </div>
                             <div class="from-group col-lg-2 col-sm-2 col-md-3 col-xs-3">
                                 <label for="email">Correo electronico</label>
-                                <input type="email" name="emailAddress" id="emailAddress" class="form-control" placeholder="example@example.com">
+                                <input type="email" name="emailAddress" id="emailAddress" class="form-control"
+                                       placeholder="example@example.com">
                             </div>
                         </div>
                         <br>

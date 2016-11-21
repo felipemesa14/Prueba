@@ -1,8 +1,8 @@
 <?php
 
-namespace Epsilon\Http\Controllers\Auth;
+namespace PlacetoPay\Http\Controllers\Auth;
 
-use Epsilon\Http\Controllers\Controller;
+use PlacetoPay\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
 class PasswordController extends Controller

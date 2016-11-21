@@ -1,5 +1,5 @@
 suites:
     main:
-        namespace: Epsilon
-        psr4_prefix: Epsilon
+        namespace: PlacetoPay
+        psr4_prefix: PlacetoPay
         src_path: app

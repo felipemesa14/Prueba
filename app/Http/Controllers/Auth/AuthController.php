@@ -1,10 +1,10 @@
 <?php
 
-namespace Epsilon\Http\Controllers\Auth;
+namespace PlacetoPay\Http\Controllers\Auth;
 
-use Epsilon\User;
+use PlacetoPay\User;
 use Validator;
-use Epsilon\Http\Controllers\Controller;
+use PlacetoPay\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 

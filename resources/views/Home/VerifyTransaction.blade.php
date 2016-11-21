@@ -13,8 +13,7 @@
                         <div class="col-lg-2 col-sm-1 col-md-1 col-xs-0"></div>
                         <div class="col-lg-8 col-sm-8 col-md-8 col-xs-12">
                             <div class="alert alert-{{$class}} alert-white rounded">
-                                <i class="zmdi zmdi-check-all"></i><strong aling="center">Su Transacción ha
-                                    sido {{$responseReasonText}}!!</strong>
+                                <i class="zmdi zmdi-check-all"></i><strong> {{$responseReasonText}}!! </strong>
                             </div>
                         </div>
                         <div class="col-lg-6 col-sm-6 col-md-6 col-xs-12">
@@ -62,10 +61,12 @@
                             </button>
                         </div>
                         <div class="col-lg-6">
-                            <button type="button" class="btn btn-danger" onclick="window.close()">
-                                <span>Cerrar</span>
-                                <i class="zmdi zmdi-close"></i>
-                            </button>
+                            <form action="{{URL::to('/')}}">
+                                <button type="submit" class="btn btn-danger">
+                                    <span>Cerrar</span>
+                                    <i class="zmdi zmdi-close"></i>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
