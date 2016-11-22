@@ -61,7 +61,7 @@ class payment extends Controller
      */
     public function index()
     {
-        $Pay = pay::whereNotNull('reference')->max('reference') + 1;
+        $Pay = pay::whereNotNull('reference')->max('reference');
         Session::put('currentUser', $Pay);
         $result = array();
         $result['TypesDocuments'] = TypeDocument::all();
