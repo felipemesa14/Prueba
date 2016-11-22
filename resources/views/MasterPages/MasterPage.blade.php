@@ -13,6 +13,7 @@
 <body>
 @include('Menu.Menu_Top')
 <section id="main">
+    <meta name="csrf_token" content="{{csrf_token()}}"/>
     @include('Menu.Menu_left')
     @yield('content')
 </section>

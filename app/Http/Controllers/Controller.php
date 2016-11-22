@@ -4,6 +4,8 @@ namespace PlacetoPay\Http\Controllers;
 
 use Artisaninweb\SoapWrapper\Facades\SoapWrapper;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use PhpSpec\Exception\Exception;
 use PlacetoPay\Models\Bank;
 use PlacetoPay\Models\Buyer;
 use PlacetoPay\Models\pay;
@@ -31,27 +33,33 @@ abstract class Controller extends BaseController
      */
     public function SaveClient($Document, $TypeDocument, $firstName, $lastName, $DocumentBuyer, $TypeDocumentBuyer, $firstNameBuyer, $lastNameBuyer, $emailAddress)
     {
-        $ConsulPayer = Payer::find($Document);
-        if (count($ConsulPayer) == 0) {
-            $Payer = new Payer();
-            $Payer->document = $Document;
-        } else {
-            $Payer = $ConsulPayer;
-            $Payer->document = $Document;
-        }
-        $Payer->documentType = $TypeDocument;
-        $Payer->firstName = $firstName;
-        $Payer->lastName = $lastName;
-        $Payer->emailAddress = $emailAddress;
-        $Payer->save();
-        //Validar si comprador se ingreso correctamente
-        if ($DocumentBuyer != "") {
-            $Buyer = new Buyer();
-            $Buyer->document = $DocumentBuyer;
-            $Buyer->documentType = $TypeDocumentBuyer;
-            $Buyer->firstName = $firstNameBuyer;
-            $Buyer->lastName = $lastNameBuyer;
-            $Buyer->save();
+        try {
+            DB::beginTransaction();
+            $ConsulPayer = Payer::find($Document);
+            if (count($ConsulPayer) == 0) {
+                $Payer = new Payer();
+                $Payer->document = $Document;
+            } else {
+                $Payer = $ConsulPayer;
+                $Payer->document = $Document;
+            }
+            $Payer->documentType = $TypeDocument;
+            $Payer->firstName = $firstName;
+            $Payer->lastName = $lastName;
+            $Payer->emailAddress = $emailAddress;
+            $Payer->save();
+            //Validar si comprador se ingreso correctamente
+            if ($DocumentBuyer != "") {
+                $Buyer = new Buyer();
+                $Buyer->document = $DocumentBuyer;
+                $Buyer->documentType = $TypeDocumentBuyer;
+                $Buyer->firstName = $firstNameBuyer;
+                $Buyer->lastName = $lastNameBuyer;
+                $Buyer->save();
+            }
+            DB::commit();
+        } catch (Exception $e) {
+            $result['message'] = $e->getMessage();
         }
     }
 
@@ -133,15 +141,19 @@ abstract class Controller extends BaseController
             $auth = $this->Auth();
             $this->Soap();
             $getBankList = '';
-            SoapWrapper::service('placetopay', function ($soap) use ($auth, &$getBankList) {
-                $getBankList = $soap->call('getBankList', array(['auth' => $auth]));
-            });
-            Bank::whereNotNull('bankCode')->delete();
-            foreach ($getBankList->getBankListResult->item as $banks) {
-                $CreateBanks = new Bank();
-                $CreateBanks->bankCode = $banks->bankCode;
-                $CreateBanks->bankName = $banks->bankName;
-                $CreateBanks->save();
+            try {
+                SoapWrapper::service('placetopay', function ($soap) use ($auth, &$getBankList) {
+                    $getBankList = $soap->call('getBankList', array(['auth' => $auth]));
+                });
+                Bank::whereNotNull('bankCode')->delete();
+                foreach ($getBankList->getBankListResult->item as $banks) {
+                    $CreateBanks = new Bank();
+                    $CreateBanks->bankCode = $banks->bankCode;
+                    $CreateBanks->bankName = $banks->bankName;
+                    $CreateBanks->save();
+                }
+            } catch (Exception $e) {
+                $result['message'] = $e->getMessage();
             }
         }
         return Bank::orderBy('bankName', 'asc')->get();
@@ -158,10 +170,14 @@ abstract class Controller extends BaseController
         $auth = $this->Auth();
         $this->Soap();
         $createTransacction = '';
-        SoapWrapper::service('placetopay', function ($service) use ($auth, &$createTransacction, &$arrayPay) {
-            $createTransacction = $service->call('createTransaction', array(['auth' => $auth, 'transaction' => $arrayPay]));
-        });
-        return $createTransacction;
+        try {
+            SoapWrapper::service('placetopay', function ($service) use ($auth, &$createTransacction, &$arrayPay) {
+                $createTransacction = $service->call('createTransaction', array(['auth' => $auth, 'transaction' => $arrayPay]));
+            });
+            return $createTransacction;
+        } catch (Exception $e) {
+            $result['message'] = $e->getMessage();
+        }
     }
 
     /** Consumo del servicio para consultar el estado de la transaccion se envia como parametro el trannsactionID
@@ -174,10 +190,14 @@ abstract class Controller extends BaseController
         $auth = $this->Auth();
         $this->Soap();
         $getTransactionInformation = '';
-        SoapWrapper::service('placetopay', function ($service) use ($auth, &$getTransactionInformation, &$transactionID) {
-            $getTransactionInformation = $service->call('getTransactionInformation', array(['auth' => $auth, 'transactionID' => $transactionID]));
-        });
-        return $getTransactionInformation;
+        try {
+            SoapWrapper::service('placetopay', function ($service) use ($auth, &$getTransactionInformation, &$transactionID) {
+                $getTransactionInformation = $service->call('getTransactionInformation', array(['auth' => $auth, 'transactionID' => $transactionID]));
+            });
+            return $getTransactionInformation;
+        } catch (Exception $e) {
+            $result['message'] = $e->getMessage();
+        }
 
     }
 }

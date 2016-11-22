@@ -3,17 +3,25 @@
 namespace PlacetoPay\Http\Controllers\placetopay;
 
 use Illuminate\Support\Facades\Session;
+use PlacetoPay\Http\Middleware\VerifyCsrfToken;
 use PlacetoPay\Models\pay;
 use PlacetoPay\Models\Payer;
 use PlacetoPay\Models\TypeClient;
 use PlacetoPay\Models\TypeDocument;
 use Illuminate\Http\Request;
 use PlacetoPay\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
-use League\Flysystem\Exception;
 
 class payment extends Controller
 {
+
+    public function getClient(Request $request)
+    {
+        $Payer = Payer::find($request->input('document'))->toArray();
+        if ($request->ajax()) {
+            return response()->json($Payer);
+        }
+    }
+
     /**
      * Vista crear transaccion
      * Diligenciando datos del cliente y datos del pago a relizar
@@ -21,6 +29,8 @@ class payment extends Controller
      */
     public function index()
     {
+        $Pay = pay::whereNotNull('reference')->max('reference');
+        Session::put('currentUser', $Pay);
         $result = array();
         $result['TypesDocuments'] = TypeDocument::all();
         $result['reference'] = pay::all()->max('reference') + 1;
@@ -53,34 +63,27 @@ class payment extends Controller
         $Description = $request->input('description');
         $currency = $request->input('currency');
         $typePay = $request->input('pse');
-        try {
-            DB::beginTransaction();
-            //Guardar datos del pagador
-            $this->SaveClient($Document, $TypeDocument, $firstName, $lastName, $DocumentBuyer, $TypeDocumentBuyer, $firstNameBuyer, $lastNameBuyer, $emailAddress);
-            //Guardar datos del pago
-            $this->SavePay($reference, $Description, $currency, $totalAmount, $Document, $DocumentBuyer, '', '', '', '');
-            //Tipo de Cliente
-            $TypesClients = TypeClient::all();
-            DB::commit();
-            //Datos de los bancos disponibles
-            $getBankList = $this->getBankList();
-            $ipAdress = $request->ip();
-            if ($typePay == 1) {
-                $descPay = 'Pago Debito - Cuenta Corriente';
-                $img = 'pse.jpg';
-            } else {
-                $descPay = 'Pago tarjeta credito';
-                $img = 'credit.jpg';
-            }
-            $result = array('document' => $Document, 'documentType' => $TypeDocument, 'firstName' => $firstName,
-                'lastName' => $lastName, 'emailAddress' => $emailAddress, 'idAdress' => $ipAdress, 'currency' => $currency,
-                'totalAmount' => $totalAmount, 'description' => $Description, 'reference' => $reference,
-                'descPay' => $descPay, 'img' => $img, 'bankInterface' => $TypesClients, 'getBankList' => $getBankList);
-            return view('Home.SetTransacction', $result);
-        } catch (Exception $e) {
-            DB::rollback();
-            return view('Home.Home');
+        //Guardar datos del pagador
+        $this->SaveClient($Document, $TypeDocument, $firstName, $lastName, $DocumentBuyer, $TypeDocumentBuyer, $firstNameBuyer, $lastNameBuyer, $emailAddress);
+        //Guardar datos del pago
+        $this->SavePay($reference, $Description, $currency, $totalAmount, $Document, $DocumentBuyer, '', '', '', '');
+        //Tipo de Cliente
+        $TypesClients = TypeClient::all();
+        //Datos de los bancos disponibles
+        $getBankList = $this->getBankList();
+        $ipAdress = $request->ip();
+        if ($typePay == 1) {
+            $descPay = 'Pago Debito - Cuenta Corriente';
+            $img = 'pse.jpg';
+        } else {
+            $descPay = 'Pago tarjeta credito';
+            $img = 'credit.jpg';
         }
+        $result = array('document' => $Document, 'documentType' => $TypeDocument, 'firstName' => $firstName,
+            'lastName' => $lastName, 'emailAddress' => $emailAddress, 'idAdress' => $ipAdress, 'currency' => $currency,
+            'totalAmount' => $totalAmount, 'description' => $Description, 'reference' => $reference,
+            'descPay' => $descPay, 'img' => $img, 'bankInterface' => $TypesClients, 'getBankList' => $getBankList);
+        return view('Home.SetTransacction', $result);
 
 
     }
@@ -100,17 +103,13 @@ class payment extends Controller
         //Consultar datos del pago
         $pay = pay::find($reference);
         $returnURL = 'https://' . $_SERVER['HTTP_HOST'] . '/PlacetoPay/VerifyTransaction/' . $reference;
-        $userAgent = $request->header('User-Agent');
-        $ipAddress = $request->ip();
         $arrayPayer = array('document' => $document, 'documentType' => $client->documentType, 'emailAddress' => $client->emailAddress,
             'firstName' => $client->firstName, 'lastName' => $client->lastName);
         $arrayPay = array('bankCode' => $bankCode, 'bankInterface' => $bankInterface, 'currency' => $pay->currency,
             'description' => $pay->description,
-            'ipAddress' => $ipAddress, 'payer' => $arrayPayer, 'reference' => $reference, 'returnURL' => $returnURL,
-            'totalAmount' => $pay->totalAmount, 'userAgent' => $userAgent);
-
+            'ipAddress' => $request->ip(), 'payer' => $arrayPayer, 'reference' => $reference, 'returnURL' => $returnURL,
+            'totalAmount' => $pay->totalAmount, 'userAgent' => $request->header('User-Agent'));
         $createTransaction = $this->createTransactionSoap($arrayPay);
-
         if ($createTransaction->createTransactionResult->returnCode == 'SUCCESS' && isset($createTransaction->createTransactionResult->returnCode)) {
             $bankURL = $createTransaction->createTransactionResult->bankURL;
             $transactionID = $createTransaction->createTransactionResult->transactionID;

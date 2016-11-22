@@ -42,7 +42,7 @@
                             <div class="form-group col-lg-2 col-sm-2 col-md-2 col-xs-12">
                                 <label for="document">Documento de Identidad</label>
                                 <input type="number" class="form-control" id="document" name="document"
-                                       placeholder="Documento de identidad" required>
+                                       placeholder="Documento de identidad" required onblur="valClient()">
                             </div>
                             <div class="form-group col-lg-3 col-sm-3 col-md-3 col-xs-12">
                                 <label for="firstName">Nombre Completo</label>
@@ -152,7 +152,8 @@
                         <div class="row">
                             <div class="col-lg-1 col-sm-1 col-md-1 col-xs-12">
                                 <div class="form-group">
-                                    <input type="hidden" name="_token" value="{{csrf_token()}}"/>
+                                    <input type="hidden" id="urlValClient" value="{{URL::to('valClient')}}">
+                                    <input type="hidden" name="_token" id="_token" value="{{csrf_token()}}"/>
                                     <br>
                                     <button type="submit" class="btn btn-success active">
                                         Continuar
