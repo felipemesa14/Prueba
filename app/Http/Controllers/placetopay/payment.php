@@ -29,7 +29,7 @@ class payment extends Controller
      */
     public function index()
     {
-        $Pay = pay::whereNotNull('reference')->max('reference');
+        $Pay = pay::whereNotNull('reference')->max('reference') + 1;
         Session::put('currentUser', $Pay);
         $result = array();
         $result['TypesDocuments'] = TypeDocument::all();
