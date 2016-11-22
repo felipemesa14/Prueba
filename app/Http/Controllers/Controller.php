@@ -200,4 +200,29 @@ abstract class Controller extends BaseController
         }
 
     }
+
+    public function _PrintTableAll($Array)
+    {
+        $Table = '<table id="' . $Array['idtable'] . '" class="table table-hover table-striped">
+                    <thead>
+                    <tr>';
+        for ($i = 0; $i < count($Array['Tittles']); $i++) {
+            $Table .= '<th><strong>' . $Array['Tittles'][$i] . '</strong></th>';
+        }
+        $Table .= '</tr>
+                </thead>
+                <tbody>';
+        $con = 0;
+        $Clase = $Array['Class'];
+        foreach ($Array['Data'] as $Dato) {
+            $Table .= '<tr class="' . $Clase[$con] . '">';
+            for ($i = 0; $i < count($Dato); $i++) {
+                $Table .= '<td>' . $Dato[$i] . '</td>';
+            }
+            $Table .= '</tr>';
+            $con = $con + 1;
+        }
+        $Table .= '</tbody></table>';
+        return $Table;
+    }
 }

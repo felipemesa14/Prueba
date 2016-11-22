@@ -22,7 +22,12 @@
         <li>
             <a href="{{URL::to('/')}}">
                 <i class="zmdi zmdi-home"></i>
-                Inicio</a>
+                REGISTRO DE PAGO</a>
+        </li>
+        <li>
+            <a href="{{URL::to('ConsultPay')}}">
+                <i class="zmdi zmdi-home"></i>
+                CONSULTAR PAGOS</a>
         </li>
     </ul>
 </aside>

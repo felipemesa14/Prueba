@@ -22,6 +22,12 @@
                     Registro de Pago
                 </a>
             </li>
+            <li class="waves-effect" id="liHome">
+                <a href="{{URL::to('ConsultPay')}}">
+                    <i class="zmdi zmdi-assignment"></i>
+                    Consulta de Pagos
+                </a>
+            </li>
         </ul>
     </nav>
     <div class="skin-switch dropdown hidden-xs">

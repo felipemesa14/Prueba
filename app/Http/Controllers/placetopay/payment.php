@@ -13,13 +13,45 @@ use PlacetoPay\Http\Controllers\Controller;
 
 class payment extends Controller
 {
-
+    /*
+     * Validación de cliente existente en la base de datos, para retorna datos ya ingresados en el sistema
+     */
     public function getClient(Request $request)
     {
-        $Payer = Payer::find($request->input('document'))->toArray();
+        $Payer = Payer::find($request->input('document'));
+        if (count($Payer) == 0) {
+            $Payer = array(['typeDocument' => '', 'firstName' => '', 'lastName' => '', 'emailAddress' => '']);
+        } else {
+            $Payer->toArray();
+        }
         if ($request->ajax()) {
             return response()->json($Payer);
         }
+    }
+
+    public function SearchTransaction(Request $request)
+    {
+        $Pay = Payer::find($request->input('document'));
+        $Title = Array('Nombre', 'Documento', 'Referencia', 'Total Recaudo', 'Descripcion', 'Acciones');
+        $listDate = array();
+        $Clases = array();
+        if (count($Pay) >= 1) {
+            $namePayer = $Pay->firstName . ' ' . $Pay->lastName;
+            foreach (pay::where('payer', $Pay->document)->get() as $pay) {
+                $url = 'VerifyTransaction/' . $pay->reference;
+                $Acciones = '<a href="javascript:void(0)" onclick="window.open(\'' . $url . '\',\'\',\'width=700,height=400,noresize\')" class="btn btn-xs btn-warning"><i class="zmdi zmdi-edit"></i></a>';
+                $Clases[] = '';
+                $listDate[] = array($namePayer, $pay->payer, $pay->reference, $pay->totalAmount, $pay->description, $Acciones);
+            }
+        }
+        $Array = array('Tittles' => $Title, 'Data' => $listDate, 'Class' => $Clases, 'idtable' => 'TableTransaction');
+
+        $Table = $this->_PrintTableAll($Array);
+        return response()->json(
+            ['Table' => $Table, 'idtable' => 'TableTransaction']
+        );
+
+
     }
 
     /**

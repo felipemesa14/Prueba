@@ -11,7 +11,13 @@
 |
 */
 Route::get('/', 'placetopay\payment@index');
+//Verificar Datos del cliente
 Route::post('valClient', 'placetopay\payment@getClient');
+//Consultar estados de las transacciones
+Route::get('ConsultPay', function () {
+    return view('Home.ConsultTransaction');
+});
+Route::post('SearchTransaction', 'placetopay\payment@SearchTransaction');
 //Ruta para registrar la persona que realiza la transaccion y empezar con el proceso de pago
 Route::post('RegisterTransaction', 'placetopay\payment@RegisterTransaction');
 //Ruta para crear la transaccion
